@@ -60,11 +60,7 @@ public class Principal extends WebSecurityConfigurerAdapter{
         http.cors().and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers(
-                        "/auth/**",
-                        "/v2/api-docs/**",
-                        "/swagger-ui/**",
-                        "/swagger-resources/**",
-                        "/configuration/**"
+                        "/auth/**"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()
