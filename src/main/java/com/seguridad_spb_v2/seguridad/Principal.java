@@ -22,13 +22,14 @@ import com.seguridad_spb_v2.seguridad.service.UserDetailsServiceImpl;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class Principal extends WebSecurityConfigurerAdapter{
+
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     JwtEntryPoint jwtEntryPoint;
 
-    @Bean
+    
     public JwtTokenFilter jwtTokenFilter(){
         return new JwtTokenFilter();
     }
@@ -38,34 +39,39 @@ public class Principal extends WebSecurityConfigurerAdapter{
         return new BCryptPasswordEncoder();
     }
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-	}
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		// TODO Auto-generated method stub
-		return super.authenticationManagerBean();
-	}
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
 
-	@Override
-	protected AuthenticationManager authenticationManager() throws Exception {
-		// TODO Auto-generated method stub
-		return super.authenticationManager();
-	}
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
-	   @Override
-	    protected void configure(HttpSecurity http) throws Exception {
-	        http.cors().and().csrf().disable()
-	                .authorizeRequests()
-	                .antMatchers("/auth/**").permitAll()
-	                .anyRequest().authenticated()
-	                .and()
-	                .exceptionHandling().authenticationEntryPoint(jwtEntryPoint)
-	                .and()
-	                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-	        http.addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-	    }
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors().and().csrf().disable()
+                .authorizeRequests()
+                .antMatchers(
+                        "/auth/**",
+                        "/v2/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-resources/**",
+                        "/configuration/**"
+                ).permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .exceptionHandling().authenticationEntryPoint(jwtEntryPoint)
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
 
 }

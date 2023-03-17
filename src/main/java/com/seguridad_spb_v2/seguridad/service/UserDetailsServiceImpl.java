@@ -8,16 +8,16 @@ import org.springframework.stereotype.Service;
 
 import com.seguridad_spb_v2.seguridad.entity.Usuario;
 import com.seguridad_spb_v2.seguridad.entity.UsuarioPrincipal;
+import com.seguridad_spb_v2.seguridad.repository.UsuarioRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    UsuarioService usuarioService;
-
+    UsuarioRepository usuarioRepository;
     @Override
     public UserDetails loadUserByUsername(String nombreUsuario) throws UsernameNotFoundException {
-        Usuario usuario = usuarioService.getByNombreUsuario(nombreUsuario).get();
+        Usuario usuario =  usuarioRepository.findByNombreUsuarioOrEmil(nombreUsuario,nombreUsuario).get();
         return UsuarioPrincipal.build(usuario);
     }
 }
